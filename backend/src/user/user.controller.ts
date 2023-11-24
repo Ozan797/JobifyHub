@@ -12,23 +12,20 @@ import {
 import { UsersService } from './user.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Response } from 'express'; // Import Response from express
-
+import { User } from './entities/user.entity';
 @Controller('users')
 export class UserController {
   constructor(private readonly usersService: UsersService) {}
 
   //   Register a new user
   @Post('register')
-  async register(
-    @Body('email') email: string,
-    @Body('password') password: string,
-  ) {
-    const existingUser = await this.usersService.findOneByEmail(email);
+  async register(@Body() userData: User) {
+    const existingUser = await this.usersService.findOneByEmail(userData.email);
     if (existingUser) {
       return { message: 'User already exists' };
     }
 
-    const newUser = await this.usersService.create(email, password);
+    const newUser = await this.usersService.create(userData);
     return { message: 'User registered successfully', user: newUser };
   }
 
