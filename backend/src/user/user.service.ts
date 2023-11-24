@@ -37,4 +37,24 @@ export class UsersService {
   ): Promise<boolean> {
     return await bcrypt.compare(password, hashedPassword);
   }
+
+  // Delete Logic
+  async deleteUser(userId: number): Promise<User | undefined> {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (user) {
+      await this.userRepository.remove(user);
+      return user;
+    }
+    return undefined;
+  }
+
+  // Deleting with email logic
+  //   async deleteUserByEmail(email: string): Promise<User | undefined> {
+  //     const user = await this.userRepository.findOne({ where: { email } });
+  //     if (user) {
+  //       await this.userRepository.remove(user);
+  //       return user;
+  //     }
+  //     return undefined;
+  //   }
 }

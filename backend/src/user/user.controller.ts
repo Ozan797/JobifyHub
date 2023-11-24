@@ -1,5 +1,16 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Param,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { UsersService } from './user.service';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { Response } from 'express'; // Import Response from express
 
 @Controller('users')
 export class UserController {
@@ -25,10 +36,11 @@ export class UserController {
   async login(
     @Body('email') email: string,
     @Body('password') password: string,
+    @Res() res: Response, // Inject the Response object from express
   ) {
     const user = await this.usersService.findOneByEmail(email);
     if (!user) {
-      return { message: 'Incorrect email' };
+      return res.status(401).json({ message: 'Incorrect email' });
     }
 
     const isPasswordValid = await this.usersService.comparePassword(
@@ -37,9 +49,45 @@ export class UserController {
     );
     if (isPasswordValid) {
       const token = await this.usersService.generateJwtToken(user.id);
-      return { message: 'Login Successful', token };
+
+      // Set the token in the Authorization header
+      res.set('Authorization', `Bearer ${token}`);
+
+      // Return success message
+      return res.status(200).json({ message: 'Login Successful' });
     } else {
-      return { message: 'incorrect password' };
+      return res.status(401).json({ message: 'Incorrect password' });
     }
   }
+
+  // Deleting user
+  @UseGuards(JwtAuthGuard)
+  @Delete(':id')
+  async deleteAccount(@Param('id') id: string, @Req() req: any) {
+    const userId = req.user.userId; // Access user ID from JWT payload
+
+    // Ensure the user is deleting their own account
+    if (userId !== parseInt(id, 10)) {
+      return { message: 'Unauthorized: You can only delete your own account' };
+    }
+
+    // Implement deletion logic
+    const deletedUser = await this.usersService.deleteUser(userId);
+    if (deletedUser) {
+      return { message: 'Account Deleted' };
+    } else {
+      return { message: 'Account not deleted' };
+    }
+  }
+
+  //Deleting User by email instead of JWT
+  //   @Delete('deleteByEmail/:email')
+  //   async deleteAccountByEmail(@Param('email') email: string) {
+  //     const deletedUser = await this.usersService.deleteUserByEmail(email);
+  //     if (deletedUser) {
+  //       return { message: 'Account deleted successfully' };
+  //     } else {
+  //       return { message: 'Account deletion failed' };
+  //     }
+  //   }
 }
