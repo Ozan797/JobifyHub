@@ -5,6 +5,7 @@ import { UsersService } from './user.service';
 export class UserController {
   constructor(private readonly usersService: UsersService) {}
 
+  //   Register a new user
   @Post('register')
   async register(
     @Body('email') email: string,
@@ -19,6 +20,7 @@ export class UserController {
     return { message: 'User registered successfully', user: newUser };
   }
 
+  //   Login existing user
   @Post('login')
   async login(
     @Body('email') email: string,
@@ -34,7 +36,8 @@ export class UserController {
       user.password,
     );
     if (isPasswordValid) {
-      return { message: 'Login Successful' };
+      const token = await this.usersService.generateJwtToken(user.id);
+      return { message: 'Login Successful', token };
     } else {
       return { message: 'incorrect password' };
     }
