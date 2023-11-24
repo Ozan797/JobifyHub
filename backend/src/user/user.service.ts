@@ -13,12 +13,15 @@ export class UsersService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async create(email: string, password: string): Promise<User> {
+  async create(userData: User): Promise<User> {
+    const { email, password } = userData; // Destructure necessary fields
+
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = this.userRepository.create({
       email,
       password: hashedPassword,
     });
+
     return await this.userRepository.save(newUser);
   }
 

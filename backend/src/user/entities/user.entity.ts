@@ -1,5 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
-
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Job } from './job.entity';
+import { Application } from './application.entity';
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
@@ -10,4 +11,13 @@ export class User {
 
   @Column()
   password: string;
+
+  @Column()
+  role: string;
+
+  @OneToMany(() => Job, (job) => job.employer)
+  jobs: Job[];
+
+  @OneToMany(() => Application, (application) => application.applicant)
+  applications: Application[];
 }
