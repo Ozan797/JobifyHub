@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Param,
+  Patch,
   Post,
   Req,
   Res,
@@ -90,4 +91,29 @@ export class UserController {
   //       return { message: 'Account deletion failed' };
   //     }
   //   }
+
+  @Patch('reset-password')
+  @UseGuards(JwtAuthGuard) // Protect this endpoint with JwtAuthGuard
+  async resetPassword(
+    @Body('userId') userId: number, // Assuming you pass userId in the request body
+    @Body('newPassword') newPassword: string,
+    @Res() res: Response,
+  ) {
+    // Verify if userId is valid or exists in the request body
+    if (!userId) {
+      return res.status(400).json({ message: 'Invalid or missing user ID' });
+    }
+
+    // Call the service to change the password
+    const isPasswordReset = await this.usersService.changePassword(
+      userId,
+      newPassword,
+    );
+
+    if (isPasswordReset) {
+      return res.status(200).json({ message: 'Password reset successful' });
+    } else {
+      return res.status(500).json({ message: 'Failed to reset password' });
+    }
+  }
 }

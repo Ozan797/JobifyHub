@@ -48,6 +48,18 @@ export class UsersService {
     return undefined;
   }
 
+  async changePassword(userId: number, newPassword: string): Promise<boolean> {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      return false;
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    await this.userRepository.save(user);
+    return true;
+  }
+
   // Deleting with email logic
   //   async deleteUserByEmail(email: string): Promise<User | undefined> {
   //     const user = await this.userRepository.findOne({ where: { email } });
