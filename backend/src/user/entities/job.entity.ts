@@ -1,12 +1,4 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  OneToMany,
-} from 'typeorm';
-import { User } from './user.entity';
-import { Application } from './application.entity';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity()
 export class Job {
@@ -22,9 +14,9 @@ export class Job {
   @Column()
   location: string;
 
-  @ManyToOne(() => User, (user) => user.jobs)
-  employer: User;
+  @Column()
+  salary: string;
 
-  @OneToMany(() => Application, (application) => application.job)
-  applications: Application[]; // Define the 'applications' property here
+  @Column()
+  company: string;
 }

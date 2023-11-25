@@ -1,10 +1,14 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
-import { Job } from './job.entity';
-import { Application } from './application.entity';
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Column()
+  firstName: string;
+
+  @Column()
+  lastName: string;
 
   @Column({ unique: true })
   email: string;
@@ -12,12 +16,9 @@ export class User {
   @Column()
   password: string;
 
-  @Column()
-  role: string;
-
-  @OneToMany(() => Job, (job) => job.employer)
-  jobs: Job[];
-
-  @OneToMany(() => Application, (application) => application.applicant)
-  applications: Application[];
+  @Column({
+    type: 'enum',
+    enum: ['Job Seeker', 'Recruiter'],
+  })
+  role: 'Job Seeker' | 'Recruiter';
 }

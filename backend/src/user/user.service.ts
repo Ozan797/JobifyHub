@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-
+import { RegisterUser } from '../types/Types';
 @Injectable()
 export class UsersService {
   constructor(
@@ -13,14 +13,15 @@ export class UsersService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async create(userData: User): Promise<User> {
-    const { email, password, role } = userData; // Destructure necessary fields
+  async findAll() {
+    return this.userRepository.find();
+  }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+  async create(userData: RegisterUser): Promise<User> {
+    const hashedPassword = await bcrypt.hash(userData.password, 10);
     const newUser = this.userRepository.create({
-      email,
+      ...userData,
       password: hashedPassword,
-      role,
     });
 
     return await this.userRepository.save(newUser);

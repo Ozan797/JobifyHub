@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Param,
   Patch,
   Post,
@@ -17,6 +18,11 @@ import { User } from './entities/user.entity';
 export class UserController {
   constructor(private readonly usersService: UsersService) {}
 
+  // Get all users in a json file format
+  @Get()
+  async getUsers() {
+    return this.usersService.findAll();
+  }
   //   Register a new user
   @Post('register')
   async register(@Body() userData: User) {
