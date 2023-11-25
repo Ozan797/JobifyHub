@@ -13,7 +13,7 @@ import {
 import { UsersService } from './user.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Response } from 'express'; // Import Response from express
-import { User } from './entities/user.entity';
+import { User } from '../entities/user.entity';
 @Controller('users')
 export class UserController {
   constructor(private readonly usersService: UsersService) {}

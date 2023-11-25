@@ -3,7 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
-import { JwtModule } from '@nestjs/jwt';
+import { JobModule } from './job/job.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -17,10 +17,7 @@ import { JwtModule } from '@nestjs/jwt';
       synchronize: true,
     }),
     UserModule,
-    JwtModule.register({
-      secret: '123', // keep secure
-      signOptions: { expiresIn: '1h' }, // Token expiration time
-    }),
+    JobModule,
   ],
   controllers: [AppController],
   providers: [AppService],
