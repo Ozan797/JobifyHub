@@ -14,12 +14,13 @@ export class UsersService {
   ) {}
 
   async create(userData: User): Promise<User> {
-    const { email, password } = userData; // Destructure necessary fields
+    const { email, password, role } = userData; // Destructure necessary fields
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = this.userRepository.create({
       email,
       password: hashedPassword,
+      role,
     });
 
     return await this.userRepository.save(newUser);
